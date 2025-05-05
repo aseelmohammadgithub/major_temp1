@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchPreviousActions } from '../services/historyService';
-
+import Navbar from './Navbar';
 function PreviousActions() {
   const [actions, setActions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -76,6 +76,8 @@ function PreviousActions() {
   }
 
   return (
+    <div>
+
     <div className="container my-5 d-flex justify-content-center">
       <div className="card shadow-lg w-100" style={{ maxWidth: '1200px' }}>
         <div className="card-body p-4">
@@ -151,6 +153,7 @@ function PreviousActions() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

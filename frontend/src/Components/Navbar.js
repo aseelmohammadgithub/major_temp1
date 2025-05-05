@@ -1,19 +1,22 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-// import img from '../../public/LogoLung.jpg';
 
-function Navbar({ loggedIn }) {
+function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
 
+  const loggedIn = Boolean(localStorage.getItem('token')); // Check if user is logged in
+
+  // Handle logout and redirect to login
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('email');
-    navigate('/login');
+    navigate('/login'); // Redirect to login page
   };
 
-  const isLimitedNav = pathname === '/about-us' || pathname === '/about-algorithm';
+  // Show Dashboard if logged in and current page is not Dashboard
+  const showDashboardButton = loggedIn && pathname !== '/dashboard';
 
   return (
     <>
@@ -37,10 +40,9 @@ function Navbar({ loggedIn }) {
 
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg">
         <div className="container">
-          <Link className="navbar-brand fs-3 fw-bold text-info" to="/">
-              <img src="/LogoLung.jpg" alt="logo" width="60px" style={{borderRadius:'12px'}}/>
-          </Link>
-
+         
+            <img src="/LogoLung.jpg" alt="logo" width="60px" style={{ borderRadius: '12px' }} />
+         
           <button
             className="navbar-toggler"
             type="button"
@@ -55,69 +57,61 @@ function Navbar({ loggedIn }) {
 
           <div className="collapse navbar-collapse" id="mainNavbar">
             <ul className="navbar-nav ms-auto align-items-center">
+              {/* Home Button: Logs out the user */}
               <li className="nav-item mx-2">
-                <Link className="nav-link" to="/">Home</Link>
+                <Link className="nav-link" to="/" onClick={handleLogout}>
+                  Home
+                </Link>
               </li>
 
-              {/* Logic for conditional nav links */}
-              {pathname === '/about-us' && (
+              {/* Show Dashboard if logged in and not on the Dashboard page */}
+              {showDashboardButton && (
                 <li className="nav-item mx-2">
-                  <Link className="nav-link" to="/about-algorithm">About Algorithm</Link>
+                  <Link className="nav-link" to="/dashboard">Dashboard</Link>
                 </li>
               )}
 
-              {pathname === '/about-algorithm' && (
-                <li className="nav-item mx-2">
-                  <Link className="nav-link" to="/about-us">About Us</Link>
+              {/* About links */}
+              <li className="nav-item mx-2">
+                <Link className="nav-link" to="/about-us">About Us</Link>
+              </li>
+              <li className="nav-item mx-2">
+                <Link className="nav-link" to="/about-algorithm">About Algorithm</Link>
+              </li>
+
+              {/* Account menu for logged in users */}
+              {loggedIn ? (
+                <li className="nav-item dropdown mx-2">
+                  <button
+                    className="nav-link dropdown-toggle bg-transparent border-0"
+                    id="accountDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Account
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                    <li>
+                      <Link className="dropdown-item" to="/previous-actions">
+                        Previous Actions
+                      </Link>
+                    </li>
+                    <li><hr className="dropdown-divider" /></li>
+                    <li>
+                      <button className="dropdown-item text-danger" onClick={handleLogout}>
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
                 </li>
-              )}
-
-              {!isLimitedNav && (
-                <>
-                  <li className="nav-item mx-2">
-                    <Link className="nav-link" to="/about-us">About Us</Link>
-                  </li>
-                  <li className="nav-item mx-2">
-                    <Link className="nav-link" to="/about-algorithm">About Algorithm</Link>
-                  </li>
-                </>
-              )}
-
-              {/* Show login/register or account menu only on full nav pages */}
-              {!isLimitedNav && (
-                loggedIn ? (
-                  <li className="nav-item dropdown mx-2">
-                    <button
-                      className="nav-link dropdown-toggle bg-transparent border-0"
-                      id="accountDropdown"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      Account
-                    </button>
-                    <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
-                      <li>
-                        <Link className="dropdown-item" to="/previous-actions">
-                          Previous Actions
-                        </Link>
-                      </li>
-                      <li><hr className="dropdown-divider" /></li>
-                      <li>
-                        <button className="dropdown-item text-danger" onClick={handleLogout}>
-                          Logout
-                        </button>
-                      </li>
-                    </ul>
-                  </li>
-                ) : (
-                  <li className="nav-item mx-2">
-                    {pathname === '/login' ? (
-                      <Link className="btn btn-outline-light" to="/">Register</Link>
-                    ) : (
-                      <Link className="btn btn-outline-light" to="/login">Login</Link>
-                    )}
-                  </li>
-                )
+              ) : (
+                <li className="nav-item mx-2">
+                  {pathname === '/login' ? (
+                    <Link className="btn btn-outline-light" to="/">Register</Link>
+                  ) : (
+                    <Link className="btn btn-outline-light" to="/login">Login</Link>
+                  )}
+                </li>
               )}
             </ul>
           </div>
@@ -128,3 +122,4 @@ function Navbar({ loggedIn }) {
 }
 
 export default Navbar;
+
